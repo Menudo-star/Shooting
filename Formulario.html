@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Añadir Errores</title>
+</head>
+<body>
+  <h1>Añadir un nuevo error</h1>
+  <form id="errorForm">
+    <label>Tipo de impresora:</label><br>
+    <input type="text" name="tipo" required><br><br>
+
+    <label>Código de error:</label><br>
+    <input type="text" name="codigo" required><br><br>
+
+    <label>Palabra clave:</label><br>
+    <input type="text" name="palabra" required><br><br>
+
+    <label>Descripción:</label><br>
+    <textarea name="descripcion" required></textarea><br><br>
+
+    <label>Solución:</label><br>
+    <textarea name="solucion" required></textarea><br><br>
+
+    <button type="submit">Guardar error</button>
+  </form>
+
+  <script>
+    document.getElementById('errorForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const formData = new FormData(e.target);
+      const data = Object.fromEntries(formData.entries());
+
+      // Enlace de Google Apps Script (lo generaremos más adelante)
+      const scriptURL = "https://script.google.com/macros/s/AKfycbz2K96TsZmsJ1TWP0plNME57UnqPaPcSzfJbJMbAhCxs_XHZ_kgKxWPZ3RFYf0t4L8/exec";
+      
+      // Enviar datos al script
+      try {
+        // Usamos fetch para enviar los datos
+        const response = await fetch(scriptURL, {
+          method: 'POST',
+          body: JSON.stringify(data),
+          headers: { 'Content-Type': 'application/json' },
+        });
+
+        // Respuesta en JSON
+        const result = await response.json();
+
+        if(result.status === 'success') {
+          alert("¡Error añadido con éxito!");
+          e.target.reset(); // Limpiar el formulario después de un envío exitoso
+        } else {
+          alert("Hubo un problema al guardar el error.");
+        }
+      } catch (error) {
+        alert("Hubo un error al enviar los datos.");
+        console.error(error);
+      }
+    });
+  </script>
+</body>
+</html>
